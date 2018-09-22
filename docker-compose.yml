@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  server:
+    image: mreddy3/rescueme-server:1.3
+    env_file:
+      - .env
+    ports:
+      - 8080
+    environment:
+      - MONGO_SERVER=mongo-service
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    networks:
+      app_net:
+        aliases:
+          - app
+    depends_on:
+      - mongo-service
+    volumes:
+    - media-volume:/srv/media
+    - upload-volume:/srv/uploads
+  client:
+    image: mreddy3/rescueme:1.9
+    tty: true
+    env_file:
+      - .env
+    environment:
+      - EXPRESS_SERVER=app
+    depends_on:
+      - server
+    ports:
+      - 80:80
+    networks:
+      - app_net
+  mongo-service:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+    - data-volume:/data/db
+    - dataconfig-volume:/data/configdb
+    networks:
+      - app_net
+networks:
+  app_net:
+    driver: bridge
+volumes:
+  dataconfig-volume:
+  data-volume:
+  media-volume:
+  upload-volume:
