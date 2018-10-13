@@ -22,7 +22,7 @@ services:
     - media-volume:/srv/media
     - upload-volume:/srv/uploads
   client:
-    image: mreddy3/rescueme:1.9
+    image: mreddy3/rescueme:2.0
     tty: true
     env_file:
       - .env
